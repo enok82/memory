@@ -1,0 +1,6 @@
+docker exec -it fastapi_app bash
+psql -h db -p 5432 -U postgres -d mydatabase
+# från fastapi_app containern. PW example
+
+docker-compose down; docker-compose build; docker-compose up -d; docker exec -it fastapi_app bash
+docker compose down; docker compose build; docker compose up -d; docker exec -it fastapi_app bash

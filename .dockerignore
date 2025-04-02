@@ -1,0 +1,16 @@
+# .dockerignore file
+# Ignore Dockerfile to prevent it from being copied to the container
+Dockerfile
+.dockerignore
+.git
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.db
+.env
+*.log
+*.swp
+.idea
+.vscode
+venv

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checklist</title>
+    <script src="/static/alpine.min.js" defer></script>
+</head>
+<body>
+    <h1>Checklist</h1>
+    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+        <button style="width: 50%;" @click="sortItems">Sort</button>
+        <button style="width: 50%;" @click="addItem">Add</button>
+    </div>
+    <div x-data="checklistApp">
+        <template x-for="item in items" :key="item.id">
+            <div>
+                <input type="checkbox" x-model="item.completed" @change="updateItem(item)">
+                <input type="text" x-model="item.description" @change="updateItem(item)" />
+            </div>
+        </template>
+    </div>
+    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+        <button style="width: 50%;" @click="sortItems">Sort</button>
+        <button style="width: 50%;" @click="addItem">Add</button>
+    </div>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('checklistApp', () => ({
+                items: [],
+                async init() {
+                    try {
+                        const response = await fetch('/items');
+                        this.items = await response.json();
+                    } catch (error) {
+                        console.error('Error fetching items:', error);
+                    }
+                },
+                async sortItems() {
+                    this.items.sort((a, b) => a.description.localeCompare(b.description));
+                },
+                async addItem() {
+                    try {
+                        const response = await fetch(('/items/new'));
+                        const newItem = await response.json();
+                        this.items.push(newItem)
+                    } catch (error) {
+                        console.error('Error adding new items:', error)
+                    }
+                },
+                async updateItem(item) {
+                    try {
+                        await fetch(`/items/${item.id}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                description: item.description,
+                                completed: item.completed
+                            })
+                        });
+                    } catch (error) {
+                        console.error('Error updating item:', error);
+                    }
+                }
+            }));
+        });
+    </script>
+</body>
+</html>
